@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/vonceee/kastilyosabucal-website.git/static/css/main.e6dce6a7.css",
-    "main.js": "/vonceee/kastilyosabucal-website.git/static/js/main.0c2fe366.js",
-    "static/js/453.ecf73af1.chunk.js": "/vonceee/kastilyosabucal-website.git/static/js/453.ecf73af1.chunk.js",
-    "static/media/bg-1.png": "/vonceee/kastilyosabucal-website.git/static/media/bg-1.3c90cb4c71e1334c757d.png",
-    "static/media/img1.jpg": "/vonceee/kastilyosabucal-website.git/static/media/img1.cb730d6a4487e1f6085b.jpg",
-    "index.html": "/vonceee/kastilyosabucal-website.git/index.html",
-    "main.e6dce6a7.css.map": "/vonceee/kastilyosabucal-website.git/static/css/main.e6dce6a7.css.map",
-    "main.0c2fe366.js.map": "/vonceee/kastilyosabucal-website.git/static/js/main.0c2fe366.js.map",
-    "453.ecf73af1.chunk.js.map": "/vonceee/kastilyosabucal-website.git/static/js/453.ecf73af1.chunk.js.map"
+    "main.css": "/kastilyosabucal-website/static/css/main.c2ade744.css",
+    "main.js": "/kastilyosabucal-website/static/js/main.a1ac96ea.js",
+    "static/js/453.ecf73af1.chunk.js": "/kastilyosabucal-website/static/js/453.ecf73af1.chunk.js",
+    "static/media/bg-1.png": "/kastilyosabucal-website/static/media/bg-1.3c90cb4c71e1334c757d.png",
+    "static/media/img1.jpg": "/kastilyosabucal-website/static/media/img1.cb730d6a4487e1f6085b.jpg",
+    "index.html": "/kastilyosabucal-website/index.html",
+    "main.c2ade744.css.map": "/kastilyosabucal-website/static/css/main.c2ade744.css.map",
+    "main.a1ac96ea.js.map": "/kastilyosabucal-website/static/js/main.a1ac96ea.js.map",
+    "453.ecf73af1.chunk.js.map": "/kastilyosabucal-website/static/js/453.ecf73af1.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e6dce6a7.css",
-    "static/js/main.0c2fe366.js"
+    "static/css/main.c2ade744.css",
+    "static/js/main.a1ac96ea.js"
   ]
 }
