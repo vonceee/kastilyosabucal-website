@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Home from './components/Home';
-import About from './components/About';
-import Services from './components/Services';
-import Contact from './components/Contact';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import CustomerDashboard from './pages/dashboard/CustomerDashboard';
+
 import './App.css';
 
 function App() {
@@ -13,13 +13,12 @@ function App() {
   };
 
   return (
-    <div className="app">
-      {currentPage === 'home' && <Home navigateTo={navigateTo} />}
-      {currentPage === 'about' && <About navigateTo={navigateTo} />}
-      {currentPage === 'services' && <Services navigateTo={navigateTo} />}
-      {currentPage === 'contact' && <Contact navigateTo={navigateTo} />}
-      {/* You can add additional pages like 'photos' similarly */}
-    </div>
+    <Router basename="/kastilyosabucal-website">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/pages/dashboard/customer-dashboard" element={<CustomerDashboard />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,5 +1,6 @@
 // src/components/Home.js
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Home.css';
 
@@ -9,6 +10,10 @@ import emailIcon from '../assets/icons/email.png';
 import aboutImage from '../assets/img1.jpg';
 
 function Home() {
+  // New state for customer login
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // Existing state for appointment modal
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [appointmentForm, setAppointmentForm] = useState({
@@ -20,13 +25,20 @@ function Home() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  // Handle form field changes
+  // New state for Login/Register modal
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authTab, setAuthTab] = useState('login'); // 'login' or 'register'
+
+  // Hook for programmatic navigation
+  const navigate = useNavigate();
+
+  // Handle form field changes for appointment (existing)
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setAppointmentForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
+  // Handle appointment form submission (existing)
   const handleFormSubmit = (e) => {
     e.preventDefault();
     console.log("Appointment Data: ", appointmentForm);
@@ -45,7 +57,7 @@ function Home() {
     }, 2000);
   };
 
-  // Handle navigation via <a> tag clicks
+  // Handle navigation for appointment and other links (existing)
   const handleNavigation = (e, targetPage) => {
     e.preventDefault();
     if (targetPage === 'appointment') {
@@ -53,7 +65,7 @@ function Home() {
     }
   };
 
-  // Handle appointment type selection
+  // Handle appointment type selection (existing)
   const handleTypeSelection = (type) => {
     setAppointmentForm((prev) => ({ ...prev, appointmentType: type }));
     setShowForm(true);
@@ -67,7 +79,15 @@ function Home() {
           <span className="company-name">Kastilyo sa Bucal</span>
         </div>
         <div className="top-header-right">
-          <a href="/login" className="login-register">
+          <a
+            href="#!"
+            className="login-register"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowAuthModal(true);
+              setAuthTab('login'); // default to login tab
+            }}
+          >
             Login / Register
           </a>
         </div>
@@ -283,6 +303,7 @@ function Home() {
                       <strong>Selected: {appointmentForm.appointmentType}</strong>
                     </p>
                     <form onSubmit={handleFormSubmit}>
+                      {/* Form fields for appointment */}
                       <div className="mb-3">
                         <label htmlFor="modal-name">Name</label>
                         <input
@@ -338,6 +359,137 @@ function Home() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Login/Register Modal */}
+      {showAuthModal && (
+        <div className="modal-overlay">
+          <div className="modal-content auth-modal">
+            <h2 className="auth-header">Login / Register</h2>
+            <button className="modal-close" onClick={() => setShowAuthModal(false)}>
+              &times;
+            </button>
+            <div className="auth-tabs">
+              <button
+                className={`auth-tab ${authTab === 'login' ? 'active' : ''}`}
+                onClick={() => setAuthTab('login')}
+              >
+                Login
+              </button>
+              <button
+                className={`auth-tab ${authTab === 'register' ? 'active' : ''}`}
+                onClick={() => setAuthTab('register')}
+              >
+                Register
+              </button>
+            </div>
+            <div className="auth-form">
+              {authTab === 'login' ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    // After successful login logic:
+                    setShowAuthModal(false);
+                    setLoggedIn(true);
+                    // Programmatically navigate to the dashboard:
+                    navigate('/pages/dashboard/customer-dashboard');
+                  }}
+                >
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      id="login-email"
+                      name="login-email"
+                      className="form-control"
+                      placeholder="Email"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      id="login-password"
+                      name="login-password"
+                      className="form-control"
+                      placeholder="Password"
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Login
+                  </button>
+                  <p className="forgot-password">
+                    <a href="/forgot-password">Forgot Password?</a>
+                  </p>
+                </form>
+              ) : (
+                <form onSubmit={(e) => { e.preventDefault(); /* future register logic */ }}>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      id="register-username"
+                      name="register-username"
+                      className="form-control"
+                      placeholder="Username"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      id="register-email"
+                      name="register-email"
+                      className="form-control"
+                      placeholder="Email"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      id="register-password"
+                      name="register-password"
+                      className="form-control"
+                      placeholder="Password"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      id="register-firstname"
+                      name="register-firstname"
+                      className="form-control"
+                      placeholder="First name"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      id="register-lastname"
+                      name="register-lastname"
+                      className="form-control"
+                      placeholder="Last name"
+                      required
+                    />
+                  </div>
+                  <div className="checkbox-group">
+                    <input type="checkbox" id="privacy-policy" name="privacy-policy" required />
+                    <label htmlFor="privacy-policy"> I agree to Privacy Policy</label>
+                  </div>
+                  <div className="form-group checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required />
+                    <label htmlFor="terms"> I agree to Terms & Conditions</label>
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Register
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       )}

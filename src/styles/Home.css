@@ -402,8 +402,8 @@ html {
   flex: 1 1 300px;
 }
 
-.contact-form form .form-group {
-  margin-bottom: 15px;
+.contact-form form {
+  margin-bottom: 10px;
 }
 
 .contact-form form .form-control {
@@ -491,18 +491,6 @@ section::before {
   }
 }
 
-/* Close Button */
-.modal-close {
-  position: absolute;
-  top: 0px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #000;
-}
-
 /* Back Button */
 .back-button {
   background: none;
@@ -550,4 +538,138 @@ section::before {
   height: 100px;
   margin-top: 5px;
   color: #555;
+}
+
+/* ================= Auth Modal Styles ================= */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Auth Modal Content with Enhanced Flare */
+.modal-content.auth-modal {
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  color: #000;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Fade In Animation (same as before) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Modal Close Button */
+.modal-close {
+  position: absolute;
+  top: 0px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #000;
+}
+
+/* Auth Modal Header with Flare */
+.auth-header {
+  text-align: left;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #6a7162;
+  color: #6a7162; /* Theme primary color */
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs Container */
+.auth-tabs {
+  display: flex;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Individual Tab */
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  background: #e0e0e0;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s, color 0.3s;
+  outline: none;
+}
+
+/* Hover effect for tabs */
+.auth-tab:hover {
+  background: #d0d0d0;
+}
+
+/* Active Tab */
+.auth-tab.active {
+  background: #6a7162;
+  color: #fff;
+}
+
+/* Auth Form Container */
+.auth-form {
+  margin-top: 10px;
+}
+
+/* Auth Form Groups for spacing */
+.auth-form .form-group {
+  margin-bottom: 15px;
+}
+
+/* Checkbox Group for alignment */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.forgot-password a {
+  color: #6a7162;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* Optional: Style checkboxes */
+.auth-form input[type="checkbox"] {
+  margin-right: 5px;
 }
