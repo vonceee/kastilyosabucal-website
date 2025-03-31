@@ -1,18 +1,22 @@
 {
   "files": {
-    "main.css": "/kastilyosabucal-website/static/css/main.a0208f48.css",
-    "main.js": "/kastilyosabucal-website/static/js/main.62b685d2.js",
+    "main.css": "/kastilyosabucal-website/static/css/main.a88d0182.css",
+    "main.js": "/kastilyosabucal-website/static/js/main.8fe5500b.js",
     "static/js/453.ecf73af1.chunk.js": "/kastilyosabucal-website/static/js/453.ecf73af1.chunk.js",
-    "static/media/bg-1.png": "/kastilyosabucal-website/static/media/bg-1.3c90cb4c71e1334c757d.png",
+    "static/media/bg-2.png": "/kastilyosabucal-website/static/media/bg-2.81a268cf47110fcf8471.png",
+    "static/media/img1.jpg": "/kastilyosabucal-website/static/media/img1.5af027be84ead5f83b74.jpg",
+    "static/media/photo1.jpg": "/kastilyosabucal-website/static/media/photo1.e9b6135dcc513007a0fc.jpg",
+    "static/media/photo3.jpg": "/kastilyosabucal-website/static/media/photo3.04cfdb3a45d60ab7ab3d.jpg",
+    "static/media/photo2.jpg": "/kastilyosabucal-website/static/media/photo2.07f92a9e91076b2e1706.jpg",
+    "static/media/kastilyosabucal-logo.png": "/kastilyosabucal-website/static/media/kastilyosabucal-logo.3825ba532f671ebf2b86.png",
     "static/media/sample-profile.jpg": "/kastilyosabucal-website/static/media/sample-profile.02e43f349d4f8459e613.jpg",
-    "static/media/img1.jpg": "/kastilyosabucal-website/static/media/img1.cb730d6a4487e1f6085b.jpg",
     "index.html": "/kastilyosabucal-website/index.html",
-    "main.a0208f48.css.map": "/kastilyosabucal-website/static/css/main.a0208f48.css.map",
-    "main.62b685d2.js.map": "/kastilyosabucal-website/static/js/main.62b685d2.js.map",
+    "main.a88d0182.css.map": "/kastilyosabucal-website/static/css/main.a88d0182.css.map",
+    "main.8fe5500b.js.map": "/kastilyosabucal-website/static/js/main.8fe5500b.js.map",
     "453.ecf73af1.chunk.js.map": "/kastilyosabucal-website/static/js/453.ecf73af1.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a0208f48.css",
-    "static/js/main.62b685d2.js"
+    "static/css/main.a88d0182.css",
+    "static/js/main.8fe5500b.js"
   ]
 }
