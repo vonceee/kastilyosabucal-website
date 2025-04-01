@@ -9,11 +9,10 @@ function Reservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch reservations from Firestore
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        // Create a query to get all bookings; you can add filters (e.g., by user) if needed
+        // Query the 'bookings' collection and order by creation date descending
         const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         const reservationsData = querySnapshot.docs.map(doc => ({
@@ -33,16 +32,24 @@ function Reservations() {
   }, []);
 
   if (loading) {
-    return <div className="reservations-page"><p>Loading reservations...</p></div>;
+    return (
+      <div className="reservations-page">
+        <p>Loading reservations...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="reservations-page"><p className="error-message">{error}</p></div>;
+    return (
+      <div className="reservations-page">
+        <p className="error-message">{error}</p>
+      </div>
+    );
   }
 
   return (
     <div className="reservations-page">
-      <h1>Your Venue Reservations</h1>
+      <h1>Your Reservations</h1>
       <div className="reservations-list">
         {reservations.length === 0 ? (
           <p>No reservations found.</p>
@@ -50,30 +57,23 @@ function Reservations() {
           reservations.map((reservation) => (
             <div key={reservation.id} className="reservation-card">
               <div className="reservation-info">
-                <h3>{reservation.venue || "N/A"}</h3>
-                <p>
-                  <strong>Date:</strong> {reservation.date || "N/A"}
-                </p>
+                {/* Show the reservation date as header */}
+                <h3>{reservation.date || "N/A"}</h3>
                 <p>
                   <strong>Time Slot:</strong> {reservation.timeSlot || "N/A"}
                 </p>
                 <p>
-                  <strong>Special Requests:</strong> {reservation.specialRequests || "None"}
-                </p>
-                <p>
-                  <strong>Status:</strong>{' '}
-                  <span
-                    className={`status ${reservation.status?.toLowerCase().replace(' ', '-') || ''}`}
-                  >
-                    {reservation.status || "N/A"}
+                  <strong>Status:</strong>{" "}
+                  <span className={`status ${ (reservation.status || "pending").toLowerCase().replace(' ', '-') }`}>
+                    {reservation.status || "Pending"}
                   </span>
                 </p>
               </div>
               <div className="reservation-actions">
-                {reservation.status === 'Pending' && (
+                {(reservation.status || "Pending") === 'Pending' && (
                   <button className="cancel-button">Request Cancel</button>
                 )}
-                {reservation.status === 'Request Cancel' && (
+                {(reservation.status || "Pending") === 'Request Cancel' && (
                   <button className="info-button" disabled>
                     Cancellation Requested
                   </button>
