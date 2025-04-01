@@ -1,0 +1,29 @@
+/* Container for the whole dashboard */
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+  }
+  
+  /* Main content wrapper, arranged as a column */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent overall scrolling */
+  }
+  
+  /* Make TopBar fixed within main-content */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: inherit; /* Ensure it inherits the background */
+  }
+  
+  /* Only the page-content scrolls */
+  .page-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 10px; /* Adjust as needed */
+  }
+  

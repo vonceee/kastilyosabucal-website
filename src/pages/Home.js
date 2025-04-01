@@ -1,81 +1,164 @@
-// src/components/Home.js
+// src/pages/Home.js
+
+// General
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+// CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Home.css';
 
+// Assets
+import logo from '../assets/logo/kastilyosabucal-logo.png'
 import facebookIcon from '../assets/icons/facebook.png';
 import instagramIcon from '../assets/icons/instagram.png';
 import emailIcon from '../assets/icons/email.png';
 import aboutImage from '../assets/img1.jpg';
+import photo1 from '../assets/photo1.jpg';
+import photo2 from '../assets/photo2.jpg';
+import photo3 from '../assets/photo3.jpg';
+
+// Firebase
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 function Home() {
-  // New state for customer login
+
+  // Account Registration field state
+  const [registerFirstName, setRegisterFirstName] = useState('');
+  const [registerMiddleName, setRegisterMiddleName] = useState('');
+  const [registerLastName, setRegisterLastName] = useState('');
+  const [registerContact, setRegisterContact] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  const [registerError, setRegisterError] = useState('');
+
+  // Account Login field state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  // Photo Album Modal state
+  const [showPhotoAlbumModal, setShowPhotoAlbumModal] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const photos = [photo1, photo2, photo3];
+
+  // Authentication Modal Tab state
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authTab, setAuthTab] = useState('login'); // login tab / register tab
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // Existing state for appointment modal
-  const [showModal, setShowModal] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [appointmentForm, setAppointmentForm] = useState({
-    appointmentType: '',
-    name: '',
-    email: '',
-    date: '',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  // New state for Login/Register modal
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authTab, setAuthTab] = useState('login'); // 'login' or 'register'
-
-  // Hook for programmatic navigation
+  // General
   const navigate = useNavigate();
 
-  // Handle form field changes for appointment (existing)
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setAppointmentForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle appointment form submission (existing)
-  const handleFormSubmit = (e) => {
+  // Account Login Verification Handler
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Appointment Data: ", appointmentForm);
-    setSubmitted(true);
-    setTimeout(() => {
-      setShowModal(false);
-      setSubmitted(false);
-      setShowForm(false);
-      setAppointmentForm({
-        appointmentType: '',
-        name: '',
-        email: '',
-        date: '',
-        message: ''
-      });
-    }, 2000);
-  };
+    setLoginError('');
 
-  // Handle navigation for appointment and other links (existing)
-  const handleNavigation = (e, targetPage) => {
-    e.preventDefault();
-    if (targetPage === 'appointment') {
-      setShowModal(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      setShowAuthModal(false);
+      setLoggedIn(true);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Login Error: ", error.message);
+      setLoginError("Incorrect email or password. Please try again.");
     }
   };
 
-  // Handle appointment type selection (existing)
-  const handleTypeSelection = (type) => {
-    setAppointmentForm((prev) => ({ ...prev, appointmentType: type }));
-    setShowForm(true);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setRegisterError('');
+
+    // Validate required fields
+    if (
+      !registerFirstName.trim() ||
+      !registerLastName.trim() ||
+      !registerContact.trim() ||
+      !registerEmail.trim() ||
+      !registerPassword ||
+      !registerConfirmPassword
+    ) {
+      setRegisterError('Please fill in all required fields.');
+      return;
+    }
+
+    // Validate password and confirm password match
+    if (registerPassword !== registerConfirmPassword) {
+      setRegisterError('Passwords do not match.');
+      return;
+    }
+
+    try {
+      // Create user using Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+      const newUser = userCredential.user;
+
+      // Save additional user details to Firestore
+      await setDoc(doc(db, 'user', newUser.uid), {
+        firstName: registerFirstName,
+        middleName: registerMiddleName, // optional field
+        lastName: registerLastName,
+        contact: registerContact,
+        email: newUser.email,
+        createdAt: new Date()
+      });
+
+      setShowAuthModal(false);
+      setLoggedIn(true);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Registration Error: ", error.message);
+      setRegisterError(error.message);
+    }
+  };
+
+  // Page Section Navigation
+  const handleNavigation = (e, targetPage) => {
+    e.preventDefault();
+    if (targetPage === 'photos') {
+      setShowPhotoAlbumModal(true);
+      setCurrentPhotoIndex(0);
+    } else if (targetPage === 'home') {
+      navigate('/');
+    } else if (targetPage === 'about') {
+      const aboutSection = document.getElementById('about-section');
+      aboutSection && aboutSection.scrollIntoView({ behavior: 'smooth' });
+    } else if (targetPage === 'services') {
+      const servicesSection = document.getElementById('services-section');
+      servicesSection && servicesSection.scrollIntoView({ behavior: 'smooth' });
+    } else if (targetPage === 'contact') {
+      const contactSection = document.getElementById('contact-section');
+      contactSection && contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Photo Album Navigation Handler
+  const handleNextPhoto = () => {
+    if (currentPhotoIndex < photos.length - 1) {
+      setCurrentPhotoIndex(currentPhotoIndex + 1);
+    }
+  };
+
+  const handlePrevPhoto = () => {
+    if (currentPhotoIndex > 0) {
+      setCurrentPhotoIndex(currentPhotoIndex - 1);
+    }
   };
 
   return (
     <div>
-      {/* Top Header: Company Name & Login/Register */}
+      {/* Top Header: Company Name, Logo & Login/Register */}
       <div className="top-header">
         <div className="top-header-left">
+          <img
+            src={logo}
+            alt="Kastilyo sa Bucal"
+            className="company-logo"
+          />
           <span className="company-name">Kastilyo sa Bucal</span>
         </div>
         <div className="top-header-right">
@@ -85,10 +168,10 @@ function Home() {
             onClick={(e) => {
               e.preventDefault();
               setShowAuthModal(true);
-              setAuthTab('login'); // default to login tab
+              setAuthTab('login');
             }}
           >
-            Login / Register
+            Login
           </a>
         </div>
       </div>
@@ -98,10 +181,10 @@ function Home() {
         <div className="container">
           {/* Social Icons on Left */}
           <div className="navbar-social">
-            <a href="https://www.facebook.com/YourFacebookPage" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/kastilyosabucal" target="_blank" rel="noopener noreferrer">
               <img src={facebookIcon} alt="Facebook" className="social-icon" />
             </a>
-            <a href="https://www.instagram.com/YourInstagramPage" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/kastilyosabucal/" target="_blank" rel="noopener noreferrer">
               <img src={instagramIcon} alt="Instagram" className="social-icon" />
             </a>
             <a href="mailto:photoapp@example.com">
@@ -160,16 +243,20 @@ function Home() {
           </p>
           <div className="button-group">
             <a
-              href="/photos"
+              href="#!"
               className="btn btn-primary"
               onClick={(e) => handleNavigation(e, 'photos')}
             >
               View Photo Album
             </a>
             <a
-              href="/appointment"
+              href="#!"
               className="btn btn-outline"
-              onClick={(e) => handleNavigation(e, 'appointment')}
+              onClick={(e) => {
+                e.preventDefault();
+                setShowAuthModal(true);
+                setAuthTab('login');
+              }}
             >
               Book Reservation
             </a>
@@ -198,20 +285,23 @@ function Home() {
       {/* Services Section */}
       <section className="services-section" id="services-section">
         <div className="container services-container">
-          <h2>Our Services</h2>
-          <p className="services-tagline">What We Offer</p>
-          <div className="services-cards">
+          <h2 className="section-title">Our Services</h2>
+          <div className="services-grid">
             <div className="service-card">
-              <h3>Photoshoot</h3>
-              <p>Professional photoshoots with creative direction.</p>
+              <h3>Reservation</h3>
+              <p className="service-description">
+                Capture your special moments in our stunning venue. Our rental packages offer the perfect backdrop for your
+                photoshoots and events, providing an elegant space to bring your creative vision to life.
+              </p>
+              <p className="price-range"><strong></strong> P3,600 - P10,000</p>
             </div>
             <div className="service-card">
-              <h3>Day Tours</h3>
-              <p>Guided tours of our majestic castle venue.</p>
-            </div>
-            <div className="service-card">
-              <h3>Event Hosting</h3>
-              <p>Host memorable events in our stunning surroundings.</p>
+              <h3>Day Tour</h3>
+              <p className="service-description">
+                Explore our historic venue with a guided day tour. Immerse yourself in the rich heritage and stunning views
+                of our property.
+              </p>
+              <p className="price-range"><strong></strong></p>
             </div>
           </div>
         </div>
@@ -249,125 +339,61 @@ function Home() {
         </div>
       </section>
 
-      {/* Book Appointment Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content modal-flare">
-            <button className="modal-close" onClick={() => setShowModal(false)}>
+      {showPhotoAlbumModal && (
+        <div className="photo-modal-overlay">
+          <div className="photo-modal-container">
+            <button className="photo-modal-close" onClick={() => setShowPhotoAlbumModal(false)}>
               &times;
             </button>
-            {submitted ? (
-              <div className="modal-message">
-                <h2>Appointment Booked!</h2>
-                <p>Thank you, {appointmentForm.name}.</p>
-              </div>
-            ) : (
-              <div>
-                <h2>Book an Appointment</h2>
-                {!showForm ? (
-                  <div className="mb-3 appointment-type">
-                    <label className="appointment-type-label">Select Appointment Type</label>
-                    <div className="appointment-options">
-                      <button
-                        className="appointment-btn"
-                        onClick={() => handleTypeSelection("Day Tour")}
-                      >
-                        Day Tour
-                        <p className="option-description">
-                          Enjoy a guided tour of our castle venue with exclusive package details.
-                        </p>
-                      </button>
-                      <button
-                        className="appointment-btn"
-                        onClick={() => handleTypeSelection("Photoshoot")}
-                      >
-                        Photoshoot
-                        <p className="option-description">
-                          Get a professional photoshoot session with creative direction.
-                        </p>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      className="back-button"
-                      onClick={() => {
-                        setShowForm(false);
-                        setAppointmentForm((prev) => ({ ...prev, appointmentType: '' }));
-                      }}
-                    >
-                      &larr; Back
-                    </button>
-                    <p>
-                      <strong>Selected: {appointmentForm.appointmentType}</strong>
-                    </p>
-                    <form onSubmit={handleFormSubmit}>
-                      {/* Form fields for appointment */}
-                      <div className="mb-3">
-                        <label htmlFor="modal-name">Name</label>
-                        <input
-                          type="text"
-                          id="modal-name"
-                          name="name"
-                          className="form-control"
-                          value={appointmentForm.name}
-                          onChange={handleFormChange}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="modal-email">Email</label>
-                        <input
-                          type="email"
-                          id="modal-email"
-                          name="email"
-                          className="form-control"
-                          value={appointmentForm.email}
-                          onChange={handleFormChange}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="modal-date">Preferred Date</label>
-                        <input
-                          type="date"
-                          id="modal-date"
-                          name="date"
-                          className="form-control"
-                          value={appointmentForm.date}
-                          onChange={handleFormChange}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="modal-message">Message (Optional)</label>
-                        <textarea
-                          id="modal-message"
-                          name="message"
-                          className="form-control"
-                          rows="3"
-                          value={appointmentForm.message}
-                          onChange={handleFormChange}
-                        ></textarea>
-                      </div>
-                      <button type="submit" className="btn btn-primary">
-                        Submit Appointment
-                      </button>
-                    </form>
-                  </>
-                )}
-              </div>
-            )}
+            <div className="photo-modal-content">
+              <button
+                className="photo-modal-nav left"
+                onClick={handlePrevPhoto}
+                disabled={currentPhotoIndex === 0}
+              >
+                &#10094;
+              </button>
+              <img
+                src={photos[currentPhotoIndex]}
+                alt={`Photo ${currentPhotoIndex + 1}`}
+                className="photo-modal-image"
+              />
+              <button
+                className="photo-modal-nav right"
+                onClick={handleNextPhoto}
+                disabled={currentPhotoIndex === photos.length - 1}
+              >
+                &#10095;
+              </button>
+            </div>
+            <div className="photo-modal-thumbnails">
+              {photos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt={`Thumbnail ${index + 1}`}
+                  className={`thumbnail ${index === currentPhotoIndex ? 'active' : ''}`}
+                  onClick={() => setCurrentPhotoIndex(index)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Login/Register Modal */}
+
+
+      {/* Footer Section */}
+      <footer className="footer-section">
+        <div className="container">
+          <p>&copy; {new Date().getFullYear()} Kastilyo sa Bucal. All rights reserved.</p>
+        </div>
+      </footer>
+
+      {/* Auth Modal (Login/Registration) */}
       {showAuthModal && (
         <div className="modal-overlay">
           <div className="modal-content auth-modal">
-            <h2 className="auth-header">Login / Register</h2>
             <button className="modal-close" onClick={() => setShowAuthModal(false)}>
               &times;
             </button>
@@ -385,110 +411,188 @@ function Home() {
                 Register
               </button>
             </div>
-            <div className="auth-form">
-              {authTab === 'login' ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    // After successful login logic:
-                    setShowAuthModal(false);
-                    setLoggedIn(true);
-                    // Programmatically navigate to the dashboard:
-                    navigate('/pages/dashboard/customer-dashboard');
-                  }}
-                >
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      id="login-email"
-                      name="login-email"
-                      className="form-control"
-                      placeholder="Email"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      id="login-password"
-                      name="login-password"
-                      className="form-control"
-                      placeholder="Password"
-                      required
-                    />
-                  </div>
-                  <button type="submit" className="btn btn-primary">
-                    Login
-                  </button>
-                  <p className="forgot-password">
-                    <a href="/forgot-password">Forgot Password?</a>
-                  </p>
-                </form>
-              ) : (
-                <form onSubmit={(e) => { e.preventDefault(); /* future register logic */ }}>
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      id="register-username"
-                      name="register-username"
-                      className="form-control"
-                      placeholder="Username"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      id="register-email"
-                      name="register-email"
-                      className="form-control"
-                      placeholder="Email"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      id="register-password"
-                      name="register-password"
-                      className="form-control"
-                      placeholder="Password"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      id="register-firstname"
-                      name="register-firstname"
-                      className="form-control"
-                      placeholder="First name"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      id="register-lastname"
-                      name="register-lastname"
-                      className="form-control"
-                      placeholder="Last name"
-                      required
-                    />
-                  </div>
-                  <div className="checkbox-group">
-                    <input type="checkbox" id="privacy-policy" name="privacy-policy" required />
-                    <label htmlFor="privacy-policy"> I agree to Privacy Policy</label>
-                  </div>
-                  <div className="form-group checkbox-group">
-                    <input type="checkbox" id="terms" name="terms" required />
-                    <label htmlFor="terms"> I agree to Terms & Conditions</label>
-                  </div>
-                  <button type="submit" className="btn btn-primary">
-                    Register
-                  </button>
-                </form>
-              )}
+            <div className="auth-form-scroll">
+              <div className="auth-form">
+                {authTab === 'login' ? (
+                  <form onSubmit={handleLogin}>
+                    <div className="form-group">
+                      <input
+                        type="email"
+                        id="login-email"
+                        name="login-email"
+                        className="form-control"
+                        placeholder="Email"
+                        required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="password"
+                        id="login-password"
+                        name="login-password"
+                        className="form-control"
+                        placeholder="Password"
+                        required
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                      />
+                    </div>
+                    {loginError && (
+                      <p className="error-message" style={{ color: 'red' }}>
+                        {loginError}
+                      </p>
+                    )}
+                    <button type="submit" className="btn btn-primary">
+                      Login
+                    </button>
+                    <p className="forgot-password">
+                      <a href="/forgot-password">Forgot Password?</a>
+                    </p>
+                  </form>
+                ) : (
+                  <form onSubmit={handleRegister}>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        id="register-firstname"
+                        name="register-firstname"
+                        className="form-control"
+                        placeholder="First Name"
+                        required
+                        autoComplete="given-name"
+                        value={registerFirstName}
+                        onChange={(e) => setRegisterFirstName(e.target.value)}
+                        onKeyPress={(e) => {
+                          // Allow letters and spaces only
+                          const regex = /^[A-Za-z\s]$/;
+                          if (!regex.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        id="register-middlename"
+                        name="register-middlename"
+                        className="form-control"
+                        placeholder="Middle Name"
+                        autoComplete="additional-name"
+                        value={registerMiddleName}
+                        onChange={(e) => setRegisterMiddleName(e.target.value)}
+                        onKeyPress={(e) => {
+                          // Allow letters and spaces only
+                          const regex = /^[A-Za-z\s]$/;
+                          if (!regex.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        id="register-lastname"
+                        name="register-lastname"
+                        className="form-control"
+                        placeholder="Last Name"
+                        required
+                        autoComplete="family-name"
+                        value={registerLastName}
+                        onChange={(e) => setRegisterLastName(e.target.value)}
+                        onKeyPress={(e) => {
+                          // Allow letters and spaces only
+                          const regex = /^[A-Za-z\s]$/;
+                          if (!regex.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="tel"
+                        id="register-contact"
+                        name="register-contact"
+                        className="form-control"
+                        placeholder="Contact No."
+                        required
+                        autoComplete="tel"
+                        value={registerContact}
+                        onChange={(e) => setRegisterContact(e.target.value)}
+                        onKeyPress={(e) => {
+                          // Allow numbers only
+                          const regex = /^[0-9]$/;
+                          if (!regex.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        pattern="\d{10,15}"
+                        title="Please enter a valid contact number (10-15 digits)."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="email"
+                        id="register-email"
+                        name="register-email"
+                        className="form-control"
+                        placeholder="Email"
+                        required
+                        autoComplete="email"
+                        value={registerEmail}
+                        onChange={(e) => setRegisterEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="password"
+                        id="register-password"
+                        name="register-password"
+                        className="form-control"
+                        placeholder="Password"
+                        required
+                        autoComplete="new-password"
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="password"
+                        id="register-confirm-password"
+                        name="register-confirm-password"
+                        className="form-control"
+                        placeholder="Confirm Password"
+                        required
+                        autoComplete="new-password"
+                        value={registerConfirmPassword}
+                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                    {registerError && (
+                      <p className="error-message" style={{ color: 'red' }}>
+                        {registerError}
+                      </p>
+                    )}
+                    <div className="form-group checkbox-group">
+                      <input type="checkbox" id="terms" name="terms" required />
+                      <label htmlFor="terms">
+                        I have read & agree to&nbsp;
+                        <a href="../Register_Terms&Condition.pdf" target="_blank" rel="noopener noreferrer">
+                          Terms &amp; Conditions
+                        </a>
+                      </label>
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                      Register
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           </div>
         </div>
