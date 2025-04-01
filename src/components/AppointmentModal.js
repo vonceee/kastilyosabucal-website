@@ -1,13 +1,19 @@
 // src/components/AppointmentModal.js
 import React, { useState } from 'react';
+
+// Assets
 import { FaClock, FaUsers, FaMoneyBillWave } from 'react-icons/fa';
 import GCASH_QR from '../assets/qr/sample-qr.png';
 import BPI_QR from '../assets/qr/sample-qr1.png';
+import successGif from '../assets/gif/success.gif';
+
 import '../styles/AppointmentModal.css';
 
 // Database
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
 
 function AppointmentModal({ onClose, onNext }) {
   // Step state and form data
@@ -21,6 +27,11 @@ function AppointmentModal({ onClose, onNext }) {
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
   // Error message state
   const [errorMessage, setErrorMessage] = useState('');
+  // Confirmation message state
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [bookingId, setBookingId] = useState('');
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Compute minimum booking date (one week from today)
   const today = new Date();
@@ -68,7 +79,7 @@ function AppointmentModal({ onClose, onNext }) {
     e.preventDefault();
     // Clear any previous error
     setErrorMessage('');
-  
+
     if (currentStep === 1) {
       if (!selectedPackage) {
         setErrorMessage("Please select a package.");
@@ -96,24 +107,63 @@ function AppointmentModal({ onClose, onNext }) {
       }
       setCurrentStep(4);
     } else if (currentStep === 4) {
+      // Set processing state to true to show loading in the button.
+      setIsProcessing(true);
       const details = {
         package: selectedPackage,
         date: appointmentDate,
         timeSlot: selectedTimeSlot,
         paymentMethod,
         referenceNumber,
-        paymentScreenshot, // you might need additional handling to upload the file and store a URL
       };
       try {
-        const docRef = await addDoc(collection(db, 'bookings'), details);
-        console.log("Booking stored with ID:", docRef.id);
-        onNext && onNext(details);
+        // paymentScreenshot is the file from the input
+        const docRef = await handleConfirmBooking(details, paymentScreenshot);
+        console.log("Booking confirmed with ID:", docRef.id);
+        // Set confirmation title and booking ID separately
+        setConfirmationMessage("Booking Successful!");
+        setBookingId(docRef.id);
       } catch (error) {
-        console.error("Error storing booking:", error);
-        setErrorMessage("There was an error processing your booking. Please try again.");
+        // Handle error if needed
+      } finally {
+        setIsProcessing(false);
       }
     }
-  };  
+  };
+
+  async function uploadFile(file) {
+    try {
+      // Create a storage reference (you can adjust the folder structure as needed)
+      const storageRef = ref(storage, `bookings/${file.name}`);
+      // Upload the file
+      const snapshot = await uploadBytes(storageRef, file);
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  }
+
+  const handleConfirmBooking = async (details, file) => {
+    try {
+      const imageURL = await uploadFile(file);
+      const bookingData = {
+        ...details,
+        paymentScreenshotURL: imageURL,
+        createdAt: new Date(),
+      };
+      // Save the booking data to Firestore (in a collection called 'bookings')
+      const docRef = await addDoc(collection(db, 'bookings'), bookingData);
+      console.log("Booking stored with ID:", docRef.id);
+      return docRef;
+    } catch (error) {
+      console.error("Error storing booking:", error);
+      setErrorMessage("There was an error processing your booking. Please try again.");
+      throw error;
+    }
+  };
 
   const handleBack = (e) => {
     e.preventDefault();
@@ -126,6 +176,23 @@ function AppointmentModal({ onClose, onNext }) {
   const handleFileChange = (e) => {
     setPaymentScreenshot(e.target.files[0]);
   };
+
+  if (confirmationMessage) {
+    return (
+      <div className="modal-overlay">
+        <div className="modal-content appointment-modal">
+          <button className="modal-close" onClick={onClose}>&times;</button>
+          <div className="confirmation-message">
+            <img src={successGif} alt="Booking Successful" className="success-gif" />
+            <h2>{confirmationMessage}</h2>
+            <p>Booking ID: {bookingId}</p>
+            <p>Thank you for booking with Kastilyo sa Bucal. We look forward to serving you!</p>
+            <button className="btn btn-primary" onClick={onClose}>Close</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal-overlay">
@@ -356,11 +423,13 @@ function AppointmentModal({ onClose, onNext }) {
           )}
 
           <div className="modal-buttons">
-            <button className="btn btn-secondary" onClick={handleBack} disabled={currentStep === 1}>
+            <button className="btn btn-secondary" onClick={handleBack} disabled={currentStep === 1 || isProcessing}>
               Back
             </button>
-            <button type="submit" className="btn btn-primary">
-              {currentStep === 4 ? 'Confirm Booking' : 'Next'}
+            <button type="submit" className="btn btn-primary" disabled={isProcessing}>
+              {currentStep === 4
+                ? (isProcessing ? 'Processing...' : 'Confirm Booking')
+                : 'Next'}
             </button>
           </div>
         </form>

@@ -2,208 +2,240 @@
 
 /* Global Reset and Font */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Brand Name (replacing logo image) */
+.sidebar-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.brand-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  transition: text-shadow 0.3s ease;
+}
+
+.brand-name:hover {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Sidebar Section */
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.sidebar-section h6 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: #adb5bd;
+  letter-spacing: 0.05em;
+}
+
+/* Navigation Links in Sidebar */
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  color: #adb5bd;
+  padding: 10px 5px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #495057;
+  color: #fff;
+}
+
+/* Spacing for Sidebar Icons */
+.sidebar-icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* Help Section at Bottom of Sidebar */
+.sidebar-help {
+  margin-top: auto;
+  text-align: left;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: #adb5bd;
+  padding: 8px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: 500;
+}
+
+.help-link:hover {
+  background-color: #495057;
+  color: #fff;
+}
+
+/* Top Bar Styles */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  /* offset to account for sidebar */
+  width: calc(100% - 250px);
+  /* subtract sidebar width from total viewport */
+  background-color: #000;
+  border-bottom: 1px solid #444;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Top Bar Navigation Links */
+.top-nav-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.top-nav-link:hover {
+  color: #ccc;
+  transform: scale(1.05);
+}
+
+.top-nav-icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+/* Profile Picture and Notification Icon */
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.notification-icon:hover {
+  color: #ccc;
+}
+
+/* Breadcrumbs Styles */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-link {
+  text-decoration: none;
+  color: #6a7162;
+  margin-right: 5px;
+}
+
+.breadcrumb-separator {
+  margin: 0 5px;
+  color: #6a7162;
+}
+
+.breadcrumb-current {
+  color: #343a40;
+  font-weight: 500;
+}
+
+/* Main Content Area Styles */
+.main-content {
+  padding-top: 60px;
+  flex: 1;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+.content-area {
+  margin: 20px;
+}
+
+/* Example Dashboard Heading */
+.main-content h1 {
+  font-size: 2.5rem;
+  color: #343a40;
+  margin-bottom: 20px;
+  animation: fadeInDown 1s ease-out;
+}
+
+/* Example Paragraph Styling */
+.main-content p {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #6a7162;
+}
+
+/* Fade In Down Animation for Headings */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f8f9fa;
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Dashboard Container */
-  .dashboard-container {
-    display: flex;
-    height: 100vh;
-    background-color: #f8f9fa;
-  }
-  
-  /* Sidebar Styles */
-  .sidebar {
-    width: 250px;
-    background-color: #343a40;
-    color: #fff;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  /* Brand Name (replacing logo image) */
-  .sidebar-logo {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .brand-name {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #fff;
-    transition: text-shadow 0.3s ease;
-  }
-  .brand-name:hover {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  }
-  
-  /* Sidebar Section */
-  .sidebar-section {
-    margin-bottom: 30px;
-  }
-  .sidebar-section h6 {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    color: #adb5bd;
-    letter-spacing: 0.05em;
-  }
-  
-  /* Navigation Links in Sidebar */
-  .sidebar .nav-link {
-    display: flex;
-    align-items: center;
-    color: #adb5bd;
-    padding: 10px 5px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  .sidebar .nav-link:hover {
-    background-color: #495057;
-    color: #fff;
-  }
-  
-  /* Spacing for Sidebar Icons */
-  .sidebar-icon {
-    margin-right: 10px;
-    font-size: 1.2rem;
-  }
-  
-  /* Help Section at Bottom of Sidebar */
-  .sidebar-help {
-    margin-top: auto;
-    text-align: left;
-  }
-  .help-link {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    color: #adb5bd;
-    padding: 8px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-weight: 500;
-  }
-  .help-link:hover {
-    background-color: #495057;
-    color: #fff;
-  }
-  
-  /* Top Bar Styles */
-  .top-bar {
-    background-color: #000;
-    border-bottom: 1px solid #444;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .top-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .top-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  /* Top Bar Navigation Links */
-  .top-nav-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #fff;
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: color 0.3s, transform 0.3s;
-  }
-  .top-nav-link:hover {
-    color: #ccc;
-    transform: scale(1.05);
-  }
-  .top-nav-icon {
-    margin-right: 8px;
-    font-size: 1.2rem;
-  }
-  
-  /* Profile Picture and Notification Icon */
-  .profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
-  .notification-icon {
-    font-size: 1.2rem;
-    color: #fff;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-  .notification-icon:hover {
-    color: #ccc;
-  }
-  
-  /* Breadcrumbs Styles */
-  .breadcrumbs {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 10px 20px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.9rem;
-  }
-  .breadcrumb-link {
-    text-decoration: none;
-    color: #6a7162;
-    margin-right: 5px;
-  }
-  .breadcrumb-separator {
-    margin: 0 5px;
-    color: #6a7162;
-  }
-  .breadcrumb-current {
-    color: #343a40;
-    font-weight: 500;
-  }
-  
-  /* Main Content Area Styles */
-  .main-content {
-    flex: 1;
-    background-color: #fff;
-    overflow-y: auto;
-  }
-  .content-area {
-    margin: 20px;
-  }
-  
-  /* Example Dashboard Heading */
-  .main-content h1 {
-    font-size: 2.5rem;
-    color: #343a40;
-    margin-bottom: 20px;
-    animation: fadeInDown 1s ease-out;
-  }
-  /* Example Paragraph Styling */
-  .main-content p {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    color: #6a7162;
-  }
-  
-  /* Fade In Down Animation for Headings */
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
+}

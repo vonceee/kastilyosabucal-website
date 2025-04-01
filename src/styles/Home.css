@@ -609,7 +609,7 @@ section::before {
   border-radius: 10px;
   width: 90%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: 100vh;
   position: relative;
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35);
   animation: fadeIn 0.3s ease;
@@ -676,25 +676,33 @@ section::before {
   outline: none;
 }
 
-/* Tabs Hover Effect */
 .auth-tab:hover {
   background: #d0d0d0;
 }
 
-/* Active Tab */
 .auth-tab.active {
   background: #6a7162;
   color: #fff;
 }
 
-/* Auth Form Container */
 .auth-form {
   margin-top: 10px;
 }
 
-/* Auth Form Groups (for spacing) */
 .auth-form .form-group {
+  margin-left: 3px;
   margin-bottom: 15px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 /* Terms & Condition Checkbox Group*/
